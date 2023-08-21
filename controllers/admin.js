@@ -12,12 +12,10 @@ exports.createAppointment = async (req, res) => {
     res.status(201).json(newAppointment);
   } catch (error) {
     console.error("Error creating appointment:", error);
-    res
-      .status(500)
-      .json({
-        error: "An error occurred while creating the appointment",
-        details: error.message,
-      });
+    res.status(500).json({
+      error: "An error occurred while creating the appointment",
+      details: error.message,
+    });
   }
 };
 
@@ -30,5 +28,22 @@ exports.getAppointment = async (req, res) => {
     res
       .status(500)
       .json({ error: "An error occurred while getting appointments" });
+  }
+};
+exports.deleteAppointment = async (req, res) => {
+  const appointmentId = req.params.id;
+  try {
+    const appointment = await Appointment.findByPk(appointmentId);
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    await appointment.destroy();
+    res.status(204).json({ message: "Appointment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting appointment:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the appointment" });
   }
 };
